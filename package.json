@@ -1,0 +1,27 @@
+{
+  "name": "kong-research-pools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "fetch": "tsx pocs/index.ts",
+    "fetch:raydium": "tsx pocs/index.ts raydium",
+    "fetch:orca": "tsx pocs/index.ts orca",
+    "fetch:meteora": "tsx pocs/index.ts meteora",
+    "fetch:pumpswap": "tsx pocs/index.ts pumpswap",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.0",
+    "dotenv": "^16.4.5",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsx": "^4.16.5",
+    "typescript": "^5.6.2"
+  }
+}

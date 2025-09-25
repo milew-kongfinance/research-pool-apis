@@ -1,0 +1,152 @@
+﻿{
+  "info": {
+    "name": "Wave1-Pools",
+    "_postman_id": "e2a1d77b-7e2f-4c3e-9b7a-20250925",
+    "description": "Wave-1 DEX Pool discovery examples for Raydium, Orca, Meteora, PumpSwap (PumpPortal).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Raydium - Pools by Mint Pair",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api-v3.raydium.io/pools/info/mint?mint1={{ray_mint1}}&mint2={{ray_mint2}}",
+          "protocol": "https",
+          "host": ["api-v3", "raydium", "io"],
+          "path": ["pools", "info", "mint"],
+          "query": [
+            { "key": "mint1", "value": "{{ray_mint1}}" },
+            { "key": "mint2", "value": "{{ray_mint2}}" }
+          ]
+        },
+        "description": "Discover Raydium pools by a base/quote mint pair (returns CPMM and/or CLMM)."
+      }
+    },
+    {
+      "name": "Raydium - Pools by IDs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api-v3.raydium.io/pools/info/ids?ids={{ray_pool_ids}}",
+          "protocol": "https",
+          "host": ["api-v3", "raydium", "io"],
+          "path": ["pools", "info", "ids"],
+          "query": [{ "key": "ids", "value": "{{ray_pool_ids}}" }]
+        },
+        "description": "Fetch Raydium pools by comma-separated pool IDs."
+      }
+    },
+    {
+      "name": "Raydium - Pools by LP Mints (CPMM only)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api-v3.raydium.io/pools/info/lps?lps={{ray_lp_mints}}",
+          "protocol": "https",
+          "host": ["api-v3", "raydium", "io"],
+          "path": ["pools", "info", "lps"],
+          "query": [{ "key": "lps", "value": "{{ray_lp_mints}}" }]
+        },
+        "description": "Fetch Raydium CPMM pools by LP mint addresses. (CLMM has no LP mint.)"
+      }
+    },
+    {
+      "name": "Orca - Whirlpool List (CLMM)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.orca.so/v1/whirlpool/list",
+          "protocol": "https",
+          "host": ["api", "orca", "so"],
+          "path": ["v1", "whirlpool", "list"]
+        },
+        "description": "List Orca Whirlpools. Returns a large list; treat as a paginable feed operationally."
+      }
+    },
+    {
+      "name": "Orca - Whirlpool Details (by address) [UNSTABLE]",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.orca.so/v1/whirlpool/{{whirlpool_pubkey}}",
+          "protocol": "https",
+          "host": ["api", "orca", "so"],
+          "path": ["v1", "whirlpool", "{{whirlpool_pubkey}}"]
+        },
+        "description": "May return diagnostic wrapper (e.g., Cloudflare 1016) instead of pool JSON depending on region/provider. Prefer the list endpoint or SDK/on-chain for per-pool reads."}
+    },
+    {
+      "name": "Meteora - DLMM Pools (HTTP)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://dlmm-api.meteora.ag/pools?limit={{meteora_limit}}",
+          "protocol": "https",
+          "host": ["dlmm-api", "meteora", "ag"],
+          "path": ["pools"],
+          "query": [{ "key": "limit", "value": "{{meteora_limit}}" }]
+        },
+        "description": "List DLMM pools with pagination support (cursor-based)."
+      }
+    },
+    {
+      "name": "Meteora - DLMM Pool Details (by address)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://dlmm-api.meteora.ag/pools/{{dlmm_pool_address}}",
+          "protocol": "https",
+          "host": ["dlmm-api", "meteora", "ag"],
+          "path": ["pools", "{{dlmm_pool_address}}"]
+        },
+        "description": "Get a DLMM pool by address."
+      }
+    },
+    {
+      "name": "PumpPortal WS - Subscribe (PumpSwap/Pump)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Open the WebSocket in Postman and send subscription messages per PumpPortal docs."
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "wss://pumpportal.fun/api/data?api-key={{pumpportal_api_key}}"
+        }
+      },
+      "description": "WebSocket endpoint (paid). Use messages like subscribeNewToken, etc."
+    }
+  ],
+  "variable": [
+    {
+      "key": "ray_mint1",
+      "value": "So11111111111111111111111111111111111111112"
+    },
+    {
+      "key": "ray_mint2",
+      "value": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+    },
+    { "key": "ray_pool_ids", "value": "" },
+    { "key": "ray_lp_mints", "value": "" },
+    { "key": "whirlpool_pubkey", "value": "" },
+    { "key": "dlmm_pool_address", "value": "" },
+    { "key": "meteora_limit", "value": "500" },
+    { "key": "pumpportal_api_key", "value": "" }
+  ]
+}
+
