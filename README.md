@@ -1,4 +1,4 @@
-# Research – Pool APIs (Wave 1)
+# Research Pool APIs (Wave 1)
 
 This repo contains research notes and **minimal discovery PoCs** for Solana DEX pools (Wave 1: Raydium AMM/CLMM, Orca Whirlpools, Meteora DLMM, PumpSwap).
 
@@ -38,7 +38,7 @@ The schema is enforced in `pocs/common/schema.ts` (Zod).
 ## Requirements
 
 - Node.js **18+** (20+ recommended)
-- Optional: a Solana HTTPS RPC for on-chain fallback (`SOLANA_RPC`), though **Orca HTTP does not require it**
+- Optional: a Solana HTTPS RPC for on-chain fallback (`SOLANA_RPC`), though **Orca & Meteora HTTP do not require it**
 
 ---
 
@@ -83,49 +83,41 @@ The Orca adapter **only** uses the **list** endpoint and maps to `PoolMeta[]`:
 
 > **Note:** The **details** route (`/v1/whirlpool/<address>`) can return a **diagnostic wrapper** (e.g., Cloudflare 1016) depending on region/provider. We **do not** rely on it in the PoC. See `dex-pools/orca.md` for details.
 
-Run (stdout prints first ~200 items, stderr prints a summary):
+To print the first ~200 items to the stdout:
 
 ```bash
 npm run fetch -- orca
 ```
 
-Capture to file and validate it parses as JSON:
+To save them in `orca.json` in the root:
 
 ```bash
-npm run fetch -- orca 1> orca.json 2> /dev/null
-node -e "console.log('pools:', JSON.parse(require('fs').readFileSync('orca.json','utf8')).length)"
-```
-
-PowerShell alternative:
-
-```powershell
-npm run fetch -- orca 1> orca.json 2> $null
-node -e "const j=JSON.parse(require('fs').readFileSync('orca.json','utf8')); console.log('pools:', j.length)"
-```
-
-You should see something like:
-
-```
-orca: OK (14983 pools)
+npm run fetch --silent -- orca | Out-File -Encoding utf8 orca.json
 ```
 
 ---
 
-## Common Scripts / CLI
+## Meteora
 
-All PoCs use a single entrypoint:
+The Meteora adapter uses **HTTP discovery** (no RPC required) via the DLMM public API:
+
+- Endpoints:
+  - `GET https://dlmm-api.meteora.ag/pair/all_with_pagination?page=<n>&limit=<m>` (recommended, paginated)
+  - `GET https://dlmm-api.meteora.ag/pair/{address}` (details)
+- Mapping:
+  - `address → pair_address`
+  - `mint_x / mint_y → base_mint / quote_mint`
+  - `bin_step → extra.binStep`
+  - `base_fee_percentage` (string) → `fee_tier_bps` (integer bps; best‑effort conversion)
+- DLMM has **no LP mint** → `lp_mint_address = null`
+- `pair_created_at` is not exposed by HTTP → left `null` (indexer backfills from first init/swap)
+- The adapter deduplicates duplicates across pages.
+
+Print to the stdout or save to `meteora.json` in the root:
 
 ```bash
-npm run fetch -- <raydium|orca|meteora|pumpswap> [--onchain=true] [--ids=a,b]   # ids currently used by raydium only
-```
-
-- `--onchain=true` enables the on-chain scan path **when implemented and when your RPC allows scans**.
-
-Examples:
-
-```bash
-npm run fetch -- orca
-npm run fetch -- orca --onchain=true      # optional; requires SOLANA_RPC and a provider that allows scans
+npm run fetch -- meteora
+npm run fetch --silent -- meteora | Out-File -Encoding utf8 meteora.json
 ```
 
 ---

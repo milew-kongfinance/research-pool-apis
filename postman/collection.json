@@ -79,35 +79,39 @@
           "host": ["api", "orca", "so"],
           "path": ["v1", "whirlpool", "{{whirlpool_pubkey}}"]
         },
-        "description": "May return diagnostic wrapper (e.g., Cloudflare 1016) instead of pool JSON depending on region/provider. Prefer the list endpoint or SDK/on-chain for per-pool reads."}
-    },
-    {
-      "name": "Meteora - DLMM Pools (HTTP)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://dlmm-api.meteora.ag/pools?limit={{meteora_limit}}",
-          "protocol": "https",
-          "host": ["dlmm-api", "meteora", "ag"],
-          "path": ["pools"],
-          "query": [{ "key": "limit", "value": "{{meteora_limit}}" }]
-        },
-        "description": "List DLMM pools with pagination support (cursor-based)."
+        "description": "May return diagnostic wrapper (e.g., Cloudflare 1016) instead of pool JSON depending on region/provider. Prefer the list endpoint or SDK/on-chain for per-pool reads."
       }
     },
     {
-      "name": "Meteora - DLMM Pool Details (by address)",
+      "name": "Meteora - DLMM Pairs (paged)",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://dlmm-api.meteora.ag/pools/{{dlmm_pool_address}}",
+          "raw": "https://dlmm-api.meteora.ag/pair/all_with_pagination?page={{meteora_page}}&limit={{meteora_limit}}",
           "protocol": "https",
           "host": ["dlmm-api", "meteora", "ag"],
-          "path": ["pools", "{{dlmm_pool_address}}"]
+          "path": ["pair", "all_with_pagination"],
+          "query": [
+            { "key": "page", "value": "{{meteora_page}}" },
+            { "key": "limit", "value": "{{meteora_limit}}" }
+          ]
         },
-        "description": "Get a DLMM pool by address."
+        "description": "List DLMM pairs (paged). Use page/limit and iterate."
+      }
+    },
+    {
+      "name": "Meteora - DLMM Pair Details (by address)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://dlmm-api.meteora.ag/pair/{{dlmm_pair_address}}",
+          "protocol": "https",
+          "host": ["dlmm-api", "meteora", "ag"],
+          "path": ["pair", "{{dlmm_pair_address}}"]
+        },
+        "description": "Get a DLMM pair by address."
       }
     },
     {
@@ -145,8 +149,9 @@
     { "key": "ray_lp_mints", "value": "" },
     { "key": "whirlpool_pubkey", "value": "" },
     { "key": "dlmm_pool_address", "value": "" },
-    { "key": "meteora_limit", "value": "500" },
+    { "key": "meteora_page", "value": "0" },
+    { "key": "meteora_limit", "value": "200" },
+    { "key": "dlmm_pair_address", "value": "" },
     { "key": "pumpportal_api_key", "value": "" }
   ]
 }
-
