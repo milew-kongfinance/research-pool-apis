@@ -1,4 +1,4 @@
-﻿# Orca Whirlpools — Pools Research (CLMM)
+﻿# Orca Whirlpools - Pools Research (CLMM)
 
 ## Official Resources
 
@@ -7,8 +7,8 @@
 
 ## Discovery Endpoints (Examples)
 
-- `GET /v1/whirlpool/list` — list whirlpools (returns a large list; treat as paginable feed for ops)
-- `GET /v1/whirlpool/<POOL_PUBKEY>` — **optional / unstable**: in some regions returns a diagnostic wrapper (e.g., Cloudflare 1016) instead of pool JSON. Prefer the list endpoint or SDK/on-chain for per-pool reads.
+- `GET /v1/whirlpool/list` - list whirlpools (returns a large list; treat as paginable feed for ops)
+- `GET /v1/whirlpool/<POOL_PUBKEY>` - **optional / unstable**: in some regions returns a diagnostic wrapper (e.g., Cloudflare 1016) instead of pool JSON. Prefer the list endpoint or SDK/on-chain for per-pool reads.
 
 ### Fields of Interest (HTTP list)
 
@@ -18,35 +18,56 @@
 - `tickSpacing` → `extra.tickSpacing`
 - `status` (not strictly required for PoC)
 
-## Sample Responses (trimmed)
+## Sample Responses
 
 ```json
 {
-  "address": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
-  "tokenA": { "mint": "So11111111111111111111111111111111111111112" },
-  "tokenB": { "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
-  "feeRateBps": 4,
-  "tickSpacing": 4
+  "dex_id": "orca",
+  "pool_type": "clmm",
+  "pair_address": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+  "base_mint": "So11111111111111111111111111111111111111112",
+  "quote_mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "fee_tier_bps": 4,
+  "lp_mint_address": null,
+  "pair_created_at": null,
+  "extra": {
+    "tickSpacing": 4,
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"
+  }
 }
 ```
 
 ```json
 {
-  "address": "C9U2Ksk6KKWvLEeo5yUQ7Xu46X7NzeBJtd9PBfuXaUSM",
-  "tokenA": { "mint": "So11111111111111111111111111111111111111112" },
-  "tokenB": { "mint": "9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump" },
-  "feeRateBps": 16,
-  "tickSpacing": 16
+  "dex_id": "orca",
+  "pool_type": "clmm",
+  "pair_address": "C9U2Ksk6KKWvLEeo5yUQ7Xu46X7NzeBJtd9PBfuXaUSM",
+  "base_mint": "So11111111111111111111111111111111111111112",
+  "quote_mint": "9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump",
+  "fee_tier_bps": 16,
+  "lp_mint_address": null,
+  "pair_created_at": null,
+  "extra": {
+    "tickSpacing": 16,
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"
+  }
 }
 ```
 
 ```json
 {
-  "address": "HxA6SKW5qA4o12fjVgTpXdq2YnZ5Zv1s7SB4FFomsyLM",
-  "tokenA": { "mint": "cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij" },
-  "tokenB": { "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
-  "feeRateBps": 4,
-  "tickSpacing": 4
+  "dex_id": "orca",
+  "pool_type": "clmm",
+  "pair_address": "HxA6SKW5qA4o12fjVgTpXdq2YnZ5Zv1s7SB4FFomsyLM",
+  "base_mint": "cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij",
+  "quote_mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "fee_tier_bps": 4,
+  "lp_mint_address": null,
+  "pair_created_at": null,
+  "extra": {
+    "tickSpacing": 4,
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"
+  }
 }
 ```
 
@@ -77,7 +98,6 @@
 ## On-chain Fallback (optional)
 
 - `getProgramAccounts` on `whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc`; decode with `@orca-so/whirlpools`.
-- In the PoC we gate scanning behind `--onchain=true` and skip gracefully if the RPC disallows scans.
 
 ## Notes
 

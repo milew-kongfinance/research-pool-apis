@@ -1,20 +1,25 @@
 import { env } from "./env.js";
 import { Connection, PublicKey, Commitment } from "@solana/web3.js";
 
-let _connection: Connection | null = null;
+const isHttp = (str: string) => /^https?:\/\//i.test(str);
+
+let connection: Connection | null = null;
 
 export function getConnection(
   commitment: Commitment = "confirmed"
 ): Connection {
-  if (!_connection) {
-    if (!env.SOLANA_RPC) {
-      throw new Error("SOLANA_RPC is required for on-chain discovery");
+  if (!connection) {
+    if (!env.SOLANA_RPC || !isHttp(env.SOLANA_RPC)) {
+      throw new Error(
+        `SOLANA_RPC must be an http(s) URL. Got: "${env.SOLANA_RPC}"`
+      );
     }
 
-    _connection = new Connection(env.SOLANA_RPC, commitment);
+    console.warn(`[solana] using RPC: ${env.SOLANA_RPC}`);
+    connection = new Connection(env.SOLANA_RPC, commitment);
   }
 
-  return _connection;
+  return connection;
 }
 
 export async function listProgramAccounts(
@@ -37,8 +42,7 @@ export async function listProgramAccounts(
     const code = error?.code ?? error?.data?.code;
     if (code === -32012 || code === -32010) {
       console.warn(
-        `[scan-skipped] getProgramAccounts blocked for ${programId} (code ${code}). ` +
-          `Use --onchain=true + a provider that allows scans or add filters.`
+        `[scan-skipped] getProgramAccounts blocked for ${programId} (code ${code}).`
       );
 
       return [];

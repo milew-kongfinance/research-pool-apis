@@ -1,4 +1,4 @@
-export type DexId = "raydium" | "orca" | "meteora" | "pumpswap";
+export type DexId = "orca" | "meteora" | "pumpswap";
 export type PoolType = "amm" | "clmm" | "dlmm" | "bonding";
 
 export type PoolMeta = {

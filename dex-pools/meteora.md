@@ -1,4 +1,4 @@
-# Meteora DLMM — Pools Research
+# Meteora DLMM - Pools Research
 
 ## Official Resources
 
@@ -7,9 +7,9 @@
 
 ## Discovery Endpoints (HTTP, stable today)
 
-- `GET /pair/all_with_pagination?page=<n>&limit=<m>` — **recommended** (paged)
-- `GET /pair/all` — full list (not paged)
-- `GET /pair/{address}` — details by pool address
+- `GET /pair/all_with_pagination?page=<n>&limit=<m>` - **recommended** (paged)
+- `GET /pair/all` - full list (not paged)
+- `GET /pair/{address}` - details by pool address
 
 > Note: The older `/pools/*` paths are **not** the public DLMM endpoints. Use `/pair/*`.
 
@@ -28,35 +28,56 @@
 `base_fee_percentage` is a string. If it looks like `"0.002"`, treat as **fraction** → `0.002 * 10_000 = 20 bps`.  
 If it looks like `"0.2"` or `"0.2%"`, treat as **percent** → `0.2 * 100 = 20 bps`.
 
-## Sample Responses (trimmed)
+## Sample Responses
 
 ```json
 {
-  "address": "9d9mb8kooFfaD3SctgZtkxQypkshx6ezhbKio89ixyy2",
-  "mint_x": "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
-  "mint_y": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  "bin_step": 50,
-  "base_fee_percentage": "10"
+  "dex_id": "meteora",
+  "pool_type": "dlmm",
+  "pair_address": "HTvjzsfX3yU6BUodCjZ5vZkUrAxMDTrBs3CJaq43ashR",
+  "base_mint": "So11111111111111111111111111111111111111112",
+  "quote_mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "fee_tier_bps": 100,
+  "lp_mint_address": null,
+  "pair_created_at": null,
+  "extra": {
+    "binStep": 1,
+    "programId": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo"
+  }
 }
 ```
 
 ```json
 {
-  "address": "BGm1tav58oGcsQJehL9WXBFXF7D27vZsKefj4xJKD5Y",
-  "mint_x": "So11111111111111111111111111111111111111112",
-  "mint_y": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  "bin_step": 10,
-  "base_fee_percentage": "10"
+  "dex_id": "meteora",
+  "pool_type": "dlmm",
+  "pair_address": "BGm1tav58oGcsQJehL9WXBFXF7D27vZsKefj4xJKD5Y",
+  "base_mint": "So11111111111111111111111111111111111111112",
+  "quote_mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "fee_tier_bps": 1000,
+  "lp_mint_address": null,
+  "pair_created_at": null,
+  "extra": {
+    "binStep": 10,
+    "programId": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo"
+  }
 }
 ```
 
 ```json
 {
-  "address": "HTvjzsfX3yU6BUodCjZ5vZkUrAxMDTrBs3CJaq43ashR",
-  "mint_x": "So11111111111111111111111111111111111111112",
-  "mint_y": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  "bin_step": 1,
-  "base_fee_percentage": "1"
+  "dex_id": "meteora",
+  "pool_type": "dlmm",
+  "pair_address": "9d9mb8kooFfaD3SctgZtkxQypkshx6ezhbKio89ixyy2",
+  "base_mint": "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
+  "quote_mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "fee_tier_bps": 1000,
+  "lp_mint_address": null,
+  "pair_created_at": null,
+  "extra": {
+    "binStep": 50,
+    "programId": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo"
+  }
 }
 ```
 
@@ -88,6 +109,6 @@ If it looks like `"0.2"` or `"0.2%"`, treat as **percent** → `0.2 * 100 = 20 b
 
 - `getProgramAccounts` on the DLMM program
 - Decode with `@meteora-ag/dlmm` layouts
-- RPC providers often restrict large scans — prefer HTTP discovery for breadth; on-chain for verification
+- RPC providers often restrict large scans - prefer HTTP discovery for breadth; on-chain for verification
 
 ---

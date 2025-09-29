@@ -7,16 +7,15 @@
     "node": ">=18"
   },
   "scripts": {
-    "fetch": "tsx pocs/index.ts",
-    "fetch:raydium": "tsx pocs/index.ts raydium",
-    "fetch:orca": "tsx pocs/index.ts orca",
-    "fetch:meteora": "tsx pocs/index.ts meteora",
-    "fetch:pumpswap": "tsx pocs/index.ts pumpswap",
+    "orca": "tsx pocs/index.ts orca",
+    "meteora": "tsx pocs/index.ts meteora",
+    "pumpswap": "tsx pocs/index.ts pumpswap",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@solana/web3.js": "^1.95.0",
     "dotenv": "^16.4.5",
+    "p-limit": "^7.1.1",
     "zod": "^4.1.11"
   },
   "devDependencies": {

@@ -1,13 +1,7 @@
-import { getJson } from "../common/http.js";
-import { PoolMeta } from "../common/types.js";
-
-const BASE = "https://dlmm-api.meteora.ag";
-const METEORA_DLMM_PROGRAM = "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo";
-
-type Page = {
-  pairs?: any[];
-  total?: number;
-} & Record<string, unknown>;
+import { Page } from "./types.js";
+import { getJson } from "../../common/http.js";
+import { PoolMeta } from "../../common/types.js";
+import { BASE, METEORA_DLMM_PROGRAM } from "./constants.js";
 
 export default async function fetch(): Promise<PoolMeta[]> {
   const result: PoolMeta[] = [];

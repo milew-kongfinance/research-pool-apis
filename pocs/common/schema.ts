@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PoolMetaSchema = z.object({
-  dex_id: z.enum(["raydium", "orca", "meteora", "pumpswap"]),
+  dex_id: z.enum(["orca", "meteora", "pumpswap"]),
   pool_type: z.enum(["amm", "clmm", "dlmm", "bonding"]),
   pair_address: z.string().min(32),
   base_mint: z.string().min(32),

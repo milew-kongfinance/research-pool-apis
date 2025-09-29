@@ -1,6 +1,6 @@
 # Research Pool APIs (Wave 1)
 
-This repo contains research notes and **minimal discovery PoCs** for Solana DEX pools (Wave 1: Raydium AMM/CLMM, Orca Whirlpools, Meteora DLMM, PumpSwap).
+This repo contains research notes and **minimal discovery PoCs** for Solana DEX pools (Wave 1: Orca Whirlpools, Meteora DLMM, PumpSwap).
 
 ---
 
@@ -10,7 +10,7 @@ This repo contains research notes and **minimal discovery PoCs** for Solana DEX 
 dex-pools/          # DEX research sheets + comparison matrix + risks
 pocs/               # Minimal TS scripts that return PoolMeta[] (discovery baseline)
 postman/            # Postman collection with example HTTP/WS calls
-.env.example        # Environment variables used by PoCs
+.env-example        # Environment variables used by PoCs
 ```
 
 ---
@@ -19,7 +19,7 @@ postman/            # Postman collection with example HTTP/WS calls
 
 ```ts
 type PoolMeta = {
-  dex_id: "raydium" | "orca" | "meteora" | "pumpswap";
+  dex_id: "orca" | "meteora" | "pumpswap";
   pool_type: "amm" | "clmm" | "dlmm" | "bonding";
   pair_address: string;
   base_mint: string;
@@ -44,31 +44,42 @@ The schema is enforced in `pocs/common/schema.ts` (Zod).
 
 ## Setup
 
-```bash
-cp .env.example .env
-# If you want on-chain fallbacks later:
-#   - Set SOLANA_RPC to a HTTPS endpoint (e.g. https://api.mainnet-beta.solana.com or a paid provider)
-#   - Set PUMPSWAP_PROGRAM only when you actually know the AMM program id you want to scan
-```
+- Clone the repo:
 
-`.env` example:
+  ```bash
+  git clone https://github.com/milew-kongfinance/research-pool-apis
+  cd research-pool-apis
+  ```
 
-```env
-SOLANA_RPC=https://api.mainnet-beta.solana.com
-PUMPSWAP_PROGRAM=
-```
+- Install the deps and check if the project compiles:
 
-Install deps:
+  ```bash
+  npm i
+  npm run typecheck
+  ```
 
-```bash
-npm i
-```
+- Create an `.env` file in the root. Check the `.env-example`:
 
-Type-check:
+  ```env
+  SOLANA_RPC=https://api.mainnet-beta.solana.com
+  PUMPSWAP_PROGRAM=pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA
+  BIRDEYE_API_KEY=foo
+  ```
 
-```bash
-npm run typecheck
-```
+  - How to get the exact values?
+
+    - `SOLANA_RPC` - the Solana HTTPS RPC endpoint used for on-chain queries and fallback.
+
+      - This is a URL to a Solana JSON-RPC node (e.g., https://api.mainnet-beta.solana.com).
+      - You can use the public endpoint above, or obtain a private endpoint from providers like QuickNode, Alchemy, or Triton for higher rate limits and reliability.
+
+    - `PUMPSWAP_PROGRAM` - the PumpSwap AMM program id on Solana mainnet.
+
+      - Identified by inspecting known PumpSwap pool accounts and swap transactions and confirming the program owner used by those instructions.
+      - Current mainnet id we use: `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`.
+
+    - `BIRDEYE_API_KEY` - the Birdeye public API key used to call their pair overview endpoint for enrichment.
+      - Obtained by creating a key in the Birdeye developer ([dashboard security section](https://bds.birdeye.so/user/security)).
 
 ---
 
@@ -83,16 +94,24 @@ The Orca adapter **only** uses the **list** endpoint and maps to `PoolMeta[]`:
 
 > **Note:** The **details** route (`/v1/whirlpool/<address>`) can return a **diagnostic wrapper** (e.g., Cloudflare 1016) depending on region/provider. We **do not** rely on it in the PoC. See `dex-pools/orca.md` for details.
 
+### Usage
+
 To print the first ~200 items to the stdout:
 
 ```bash
-npm run fetch -- orca
+npm run orca
 ```
 
 To save them in `orca.json` in the root:
 
+```powershell
+npm run orca --silent | Out-File -Encoding utf8 orca.json
+```
+
+(Or if you are using Linux):
+
 ```bash
-npm run fetch --silent -- orca | Out-File -Encoding utf8 orca.json
+npm run orca --silent > orca.json
 ```
 
 ---
@@ -113,11 +132,64 @@ The Meteora adapter uses **HTTP discovery** (no RPC required) via the DLMM publi
 - `pair_created_at` is not exposed by HTTP → left `null` (indexer backfills from first init/swap)
 - The adapter deduplicates duplicates across pages.
 
+### Usage
+
 Print to the stdout or save to `meteora.json` in the root:
 
+```powershell
+npm run meteora
+npm run meteora --silent | Out-File -Encoding utf8 meteora.json
+```
+
+Or in Linux:
+
 ```bash
-npm run fetch -- meteora
-npm run fetch --silent -- meteora | Out-File -Encoding utf8 meteora.json
+npm run meteora
+npm run meteora --silent > meteora.json
+```
+
+---
+
+## PumpSwap
+
+The PumpSwap adapter uses DexScreener search (sharded queries) for discovery, then optionally enriches with Birdeye.
+If the list is still short, it falls back to on-chain `getProgramAccounts` on a configured AMM program id.
+
+Returned `PoolMeta[]` sets:
+
+- `lp_mint_address = null`
+- `pair_created_at = null`
+- Any vendor-reported timestamp is stored in `extra.vendorCreatedAt`.
+
+### Endpoints
+
+- DexScreener search
+
+  - `GET https://api.dexscreener.com/latest/dex/search?q=<term>`
+  - (we shard terms like `pumpswap a`, `pumpswap 1`).
+
+- Birdeye enrichment
+
+  - `GET https://public-api.birdeye.so/defi/v3/pair/overview/single?address=<pair>`
+  - (requires `X-API-KEY` + `x-chain: solana`).
+
+- On-chain fallback
+  - Solana JSON-RPC `getProgramAccounts` on the PumpSwap program id.
+
+### Usage
+
+Print to the stdout or save to `pumpswap.json` in the root:
+
+```powershell
+npm run pumpswap
+npm run pumpswap --silent | Out-File -Encoding utf8 pumpswap.json
+```
+
+Or in Linux:
+
+```bash
+npm run pumpswap
+npm run pumpswap --silent > pumpswap.json
 ```
 
 ---
