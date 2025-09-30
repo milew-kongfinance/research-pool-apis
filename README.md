@@ -38,7 +38,6 @@ The schema is enforced in `pocs/common/schema.ts` (Zod).
 ## Requirements
 
 - Node.js **18+** (20+ recommended)
-- Optional: a Solana HTTPS RPC for on-chain fallback (`SOLANA_RPC`), though **Orca & Meteora HTTP do not require it**
 
 ---
 
