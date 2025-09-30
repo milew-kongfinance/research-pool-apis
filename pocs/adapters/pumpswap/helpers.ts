@@ -3,6 +3,7 @@ import { DexScreenerPair } from "./types.js";
 import { sleep } from "../../common/utils.js";
 import { getJson, postJson } from "../../common/http.js";
 import { DEX_SCREENER_BASE_URL, DEX_SCREENER_QUERIES } from "./constants.js";
+import { toDexScreenerPair } from "./mapping.js";
 
 export async function fetchBirdeyePairOverview(
   url: string,
@@ -52,14 +53,7 @@ export async function fetchProgramAccounts(
   const response = await postJson<any, { result?: any[] }>(rpcUrl, requestBody);
   const accounts = response?.result ?? [];
 
-  return accounts.map((account: any) => ({
-    pairAddress: account.pubkey,
-    baseToken: { address: "", symbol: "" },
-    quoteToken: { address: "", symbol: "" },
-    liquidityFee: 0,
-    createdAt: null,
-    url: `https://solscan.io/account/${account.pubkey}`,
-  }));
+  return accounts.map(toDexScreenerPair);
 }
 
 export function deduplicateByPairAddress<T extends { pairAddress?: string }>(
